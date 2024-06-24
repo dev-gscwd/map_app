@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:map_app/src/core/utils/utils_handler.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:map_app/src/data/enums/selection_map_enum/selection_map_enum.dart';
+import 'package:map_app/src/presentation/widget/add_layer_modal.dart';
 
 class MyMap extends StatefulWidget {
   const MyMap({super.key, required this.title});
@@ -27,6 +30,20 @@ class _MyMapState extends State<MyMap> {
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
+      floatingActionButton: SpeedDial(children: [
+        SpeedDialChild(
+          child: const Icon(Icons.my_location),
+          label: 'Single Point Layer',
+          onTap: () {
+            UtilsHandler.selectionMode = SelMapEnum.singlePoint;
+          },
+        ),
+        SpeedDialChild(
+          child: const Icon(Icons.accessibility),
+          label: 'Multi Point Layer',
+          onTap: null,
+        ),
+      ], child: const Icon(Icons.add)),
       drawer: Drawer(
         child: ListView(
           // Important: Remove any padding from the ListView.
@@ -39,7 +56,7 @@ class _MyMapState extends State<MyMap> {
               child: Text('Drawer Header'),
             ),
             ListTile(
-              leading: Icon(
+              leading: const Icon(
                 Icons.home,
               ),
               title: const Text('Page 1'),
@@ -48,7 +65,7 @@ class _MyMapState extends State<MyMap> {
               },
             ),
             ListTile(
-              leading: Icon(
+              leading: const Icon(
                 Icons.train,
               ),
               title: const Text('Page 2'),
@@ -61,10 +78,29 @@ class _MyMapState extends State<MyMap> {
       ),
       body: FlutterMap(
         options: MapOptions(
-          initialCenter: LatLng(currentPos.latitude, currentPos.longitude),
-          zoom: 6,
-          maxZoom: 15,
-        ),
+            initialCenter: LatLng(currentPos.latitude, currentPos.longitude),
+            initialZoom: 10,
+            maxZoom: 15,
+            onTap: (tap, latlng) {
+              switch (UtilsHandler.selectionMode) {
+                case SelMapEnum.inactive:
+                  break;
+                case SelMapEnum.singlePoint:
+                  showDialog(
+                      barrierDismissible: false,
+                      context: context,
+                      builder: (context) => const AddLayerModal());
+                  break;
+                case SelMapEnum.multiPoint:
+                  break;
+                case SelMapEnum.polygon:
+                  break;
+              }
+              print('$latlng tap');
+            },
+            onLongPress: (tap, latlng) {
+              print('$latlng longtap');
+            }),
         children: <Widget>[
           TileLayer(
             urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -93,7 +129,6 @@ class _MyMapState extends State<MyMap> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(onPressed: () {}),
     );
   }
 }
