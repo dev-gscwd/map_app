@@ -1,12 +1,32 @@
-import 'package:flutter/material.dart';
+import 'dart:io';
 
-void main() {
+import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:map_app/src/core/utils/utils_handler.dart';
+import 'package:map_app/src/presentation/my_map.dart';
+import 'package:permission_handler/permission_handler.dart';
+
+Future<void> main() async {
+  const permission = Permission.location;
+  if (await permission.isDenied) {
+    await permission.request();
+    if (await permission.isDenied) {
+      // exit(0);
+    }
+  }
+  WidgetsFlutterBinding.ensureInitialized();
+  // await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
+  //     .then((Position position) {
+  //   UtilsHandler.currentPosition = position;
+  //   // _getAddressFromLatLng(_currentPosition!);
+  // }).catchError((e) {
+  //   // debugPrint(e);
+  // });
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -31,7 +51,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyMap(title: 'Flutter Demo Home Page'),
     );
   }
 }
@@ -85,6 +105,38 @@ class _MyHomePageState extends State<MyHomePage> {
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          // Important: Remove any padding from the ListView.
+          padding: EdgeInsets.zero,
+          children: [
+            const DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
+              child: Text('Drawer Header'),
+            ),
+            ListTile(
+              leading: Icon(
+                Icons.home,
+              ),
+              title: const Text('Page 1'),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: Icon(
+                Icons.train,
+              ),
+              title: const Text('Page 2'),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
       ),
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
