@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:map_app/src/core/utils/constants.dart';
 import 'package:map_app/src/core/utils/utils_handler.dart';
 import 'package:map_app/src/data/enums/selection_map_enum/selection_map_enum.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:map_app/src/data/models/layers_model/layer_model.dart';
+import 'package:map_app/src/presentation/widget/description_layer_modal.dart';
 
 class AddLayerModal extends StatefulWidget {
-  const AddLayerModal({super.key});
+  final List<LatLng> pointList;
+  const AddLayerModal({super.key, required this.pointList});
 
   @override
   State<AddLayerModal> createState() => _AddLayerModalState();
@@ -87,7 +92,13 @@ class _AddLayerModalState extends State<AddLayerModal> {
                         borderRadius: BorderRadius.circular(7))),
                 onPressed: () {
                   //SAVE HERE
+                  LayerModel myLayer = LayerModel(
+                      layer: Container(),
+                      identifier: txtDesc.text,
+                      markerList: widget.pointList);
+                  UtilsHandler.layers.add(myLayer);
                   UtilsHandler.selectionMode = SelMapEnum.inactive;
+                  Navigator.pop(context);
                 },
                 child: const Text(
                   "SAVE",
