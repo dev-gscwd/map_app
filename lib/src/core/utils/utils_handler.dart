@@ -3,10 +3,18 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:map_app/src/data/enums/icon_mark_enum/icon_map_enum.dart';
 import 'package:map_app/src/data/enums/selection_map_enum/selection_map_enum.dart';
 import 'package:map_app/src/data/models/layers_model/layer_model.dart';
+import 'package:multi_dropdown/multiselect_dropdown.dart';
 
 class UtilsHandler {
+  static List<ValueItem> iconSelection = [
+    const ValueItem(label: 'Point', value: IconMapEnum.point),
+    const ValueItem(label: 'Location', value: IconMapEnum.location),
+    const ValueItem(label: 'City', value: IconMapEnum.city)
+  ];
+  static String overlayLabel = '';
   static Position currentPosition = Position(
       longitude: 0,
       latitude: 0,
@@ -18,6 +26,8 @@ class UtilsHandler {
       headingAccuracy: 0,
       speed: 0,
       speedAccuracy: 0);
+  static List<Marker> tempMarkerList = [];
+  static List<LatLng> tempPointList = [];
   static List<LayerModel> layers = [];
   static SelMapEnum selectionMode = SelMapEnum.inactive;
   static List<Widget> defaultLayer = [
